@@ -1,4 +1,4 @@
-package com.hugo.camel.tests.processor.sample;
+package com.hugo.camel.tests;
 
 import javax.jms.ConnectionFactory;
 
@@ -9,12 +9,15 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.log4j.Logger;
 
-public class SimpleMoveFiles {
+public class SimpleMQ {
 
+	private Logger logger = Logger.getLogger(SimpleMQ.class);
+	
 	public static void main(String... args) throws Exception{
 		try{
-			ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost");
+			ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
 			
 			CamelContext context = new DefaultCamelContext();
 			context.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
@@ -43,21 +46,22 @@ public class SimpleMoveFiles {
 					.to("file:data/alternative");
 					*/
 					
-					System.out.println("reading");
 					
-					from("file:data/inbox?noop=true")
+					from("file:data/inbox")
 					.to("jms:incomingOrders");
 					
 					from("jms:incomingOrders")
-					.choice().when(header("CamelFileName").endsWith(".txt"))
-						.to("jms:txtOrders")
-					.choice().when(header("CamelFileName").endsWith(".csv"))
-						.to("jms:csvOrders");
+					.choice()
+						.when(header("CamelFileName").endsWith(".txt"))
+							.to("jms:txtOrders")
+						.when(header("CamelFileName").endsWith(".csv"))
+							.to("jms:csvOrders");
 					
 					from("jms:txtOrders")
 						.process(new Processor() {
 							@Override
 							public void process(Exchange exchange) throws Exception {
+								System.out.println("here1");
 								System.out.println(
 										String.format("TXT processing FILE %s", 
 												exchange.getIn().getHeader("CamelFileName")));
@@ -68,6 +72,7 @@ public class SimpleMoveFiles {
 					.process(new Processor() {
 						@Override
 						public void process(Exchange exchange) throws Exception {
+							System.out.println("here2");
 							System.out.println(
 									String.format("CSV processing FILE %s", 
 											exchange.getIn().getHeader("CamelFileName")));

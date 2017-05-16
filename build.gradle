@@ -16,7 +16,11 @@ targetCompatibility = 1.8
 
 dependencies {
 	compile 'org.apache.camel:camel-core:2.19.0'
-	compile 'org.apache.camel:camel-jms:2.5.0'
+	compile 'org.apache.camel:camel-csv:2.14.0'
+	compile 'org.apache.camel:camel-bindy:2.19.0'
+	compile 'org.apache.camel:camel-test:2.5.0'
+	compile 'org.apache.camel:camel-jms:2.19.0'
 	compile 'org.apache.activemq:activemq-core:5.3.2'
+	compile 'log4j:log4j:1.2.17'
 }
 
