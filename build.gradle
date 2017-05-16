@@ -1,0 +1,22 @@
+buildscript{
+	repositories {
+		mavenCentral()
+	}
+}
+
+apply plugin : 'java'
+apply plugin : 'eclipse'
+
+repositories{
+	mavenCentral()
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+	compile 'org.apache.camel:camel-core:2.19.0'
+	compile 'org.apache.camel:camel-jms:2.5.0'
+	compile 'org.apache.activemq:activemq-core:5.3.2'
+}
+
