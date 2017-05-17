@@ -1,7 +1,5 @@
 package com.hugo.camel.tests.bindy.sample;
 
-import java.math.BigDecimal;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,10 +24,10 @@ public class PurchaseOrderBindyTest{
 		
 		mock.expectedBodiesReceived("Camel in Action,49.95,1\n");
 		
-		PurchaseOrder order = new PurchaseOrder();
+		PurchaseOrderInput order = new PurchaseOrderInput();
 		order.setAmount(1);
 		order.setName("Came in Action");
-		order.setPrice(new BigDecimal("49.95"));
+		order.setPrice(49.95D);
 		
 		ProducerTemplate template = context.createProducerTemplate();
 		template.sendBody("direct:toCsv", order);
@@ -44,7 +42,7 @@ public class PurchaseOrderBindyTest{
 			@Override
 			public void configure() throws Exception {
 				from("direct:toCsv")
-					.marshal().bindy(BindyType.Csv, PurchaseOrder.class)
+					.marshal().bindy(BindyType.Csv, PurchaseOrderInput.class)
 					.to("mock:result");
 			}
 		};

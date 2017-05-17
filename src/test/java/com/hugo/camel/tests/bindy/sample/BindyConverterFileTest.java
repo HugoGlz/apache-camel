@@ -11,7 +11,7 @@ import org.apache.camel.spi.DataFormat;
 import com.hugo.camel.tests.ways.transform.ProccessorImplCSV;
 import com.sun.istack.logging.Logger;
 
-public class BindyReadingFileTest{
+public class BindyConverterFileTest{
 
 	private static final Logger logger = Logger.getLogger(ProccessorImplCSV.class);
 	
@@ -34,19 +34,29 @@ public class BindyReadingFileTest{
 			public void configure() throws Exception {
 
 				DataFormat bindy = new BindyCsvDataFormat(com.hugo.camel.tests.bindy.sample.PurchaseOrderInput.class);
+				
+				DataFormat bindyOut = new BindyCsvDataFormat(com.hugo.camel.tests.bindy.sample.PurchaseOrderOutput.class);
+				
 				from("file:data/csv?noop=true")
 					.unmarshal(bindy)
 					.process(new Processor() {
-						
 						@Override
 						public void process(Exchange exchange) throws Exception {
 							logger.info("HERE 0");
+							PurchaseOrderInput object = (PurchaseOrderInput) exchange.getIn().getBody();
+                            System.out.println(object);
+                            PurchaseOrderOutput output = new PurchaseOrderOutput();
+                            output.setName(object.getName());
+                            output.setAmount(object.getAmount());
+                            output.setPrice(object.getPrice());
+                            
+                            exchange.getIn().setBody(output);
 						}
 					})
 					.to("direct:handleOrders");
 				
 				from("direct:handleOrders")
-					.marshal(bindy).bean(com.hugo.camel.tests.bindy.sample.Data.class, "print")
+					.marshal(bindyOut)
 					.process(new Processor() {
 						@Override
 						public void process(Exchange exchange) throws Exception {
@@ -61,6 +71,6 @@ public class BindyReadingFileTest{
 	}
 	
 	public static void main(String...strings) throws Exception{
-		new BindyReadingFileTest().testBindy();
+		new BindyConverterFileTest().testBindy();
 	}
 }

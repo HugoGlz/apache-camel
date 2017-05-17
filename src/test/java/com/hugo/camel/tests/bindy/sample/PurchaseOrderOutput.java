@@ -1,20 +1,18 @@
 package com.hugo.camel.tests.bindy.sample;
 
-import java.math.BigDecimal;
-
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 
 @CsvRecord(separator = ",", crlf = "UNIX")
-public class PurchaseOrder {
+public class PurchaseOrderOutput {
 
-	@DataField(pos = 1)
+	@DataField(pos = 2)
 	private String name;
 	
-	@DataField(pos = 2, precision = 2)
-	private BigDecimal price;
+	@DataField(pos = 3, precision = 2)
+	private Double price;
 	
-	@DataField(pos = 3)
+	@DataField(pos = 1)
 	private Integer amount;
 
 	public String getName() {
@@ -25,11 +23,11 @@ public class PurchaseOrder {
 		this.name = name;
 	}
 
-	public BigDecimal getPrice() {
+	public Double getPrice() {
 		return price;
 	}
 
-	public void setPrice(BigDecimal price) {
+	public void setPrice(Double price) {
 		this.price = price;
 	}
 
@@ -39,5 +37,11 @@ public class PurchaseOrder {
 
 	public void setAmount(Integer amount) {
 		this.amount = amount;
+	}
+	
+	public String toString(){
+		return String.format(
+				"The response is %s", this.getName()
+				);
 	}
 }
